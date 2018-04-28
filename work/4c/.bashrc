@@ -97,7 +97,7 @@ vox-rebuildim() {
   popd
 }
 
-alias vox-populatedb='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev bash tmp/setup.bash'
+alias vox-populatedb='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev dockerfiles/dev_env/setup.bash'
 alias vox='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml up'
 alias vox-run='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev'
 alias vox-py-shell='vox-run bash -c "python server/manage.py shell"'
@@ -116,14 +116,36 @@ vox-refresh-account() {
   vox-run bash -c "python server/manage.py shell << EOF
   from voxsup.pinterest.ads import pinterest_refresh_ad_account
   ret = pinterest_refresh_ad_account.apply(args=['${ACCOUNT_ID}'], kwargs={'force': 'true'})
+  exit()
 EOF"
+}
+
+vox-remote-refresh-account() {
+  HOST=${1:-data-api}
+  ACCOUNT_ID=${2:-549755814145}
+  vox-remote-py-shell $HOST << EOF
+  from voxsup.pinterest.ads import pinterest_refresh_ad_account
+  ret = pinterest_refresh_ad_account.apply(args=['$ACCOUNT_ID'], kwargs={'force': 'true'})
+  exit()
+EOF
+}
+
+vox-remote-ssh() {
+  HOST=${1:-data-api}
+  vox-run bash -c "source tmp/scripts.sh && vox-remote-ssh ${HOST}"
 }
 
 alias vox-purge-celery='docker rm -f devenv_voxsup_celery_1 devenv_rabbitmq_1'
 
 vox-remote-py-shell() {
   HOST=${1:-data-api}
-  vox-run bash -c "source tmp/scripts.sh && vox-remote-ssh ${HOST}"
+  COMMAND=${2:-}
+  vox-run bash -c "source tmp/scripts.sh && vox-remote-py-shell ${HOST} ${COMMAND}"
+}
+
+vox-tail-deploy-server-log() {
+  HOST=${1:-build}
+  vox-run bash -c "ssh -o 'StrictHostKeyChecking no' build@$HOST.4cinsights.com 'tail -F -n500 /files2/software/build_server/log/stdout'"
 }
 
 vox-fetch-pint-dump-hourly() {
