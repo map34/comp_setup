@@ -36,9 +36,12 @@ export PATH=${GOPATH}/bin:$PATH
 export PATH=$PATH:/usr/local/sbin
 export PATH="$(dirname $(go list -f '{{.Target}}' myitcv.io/react/cmd/reactGen)):$PATH"
 
+# Rust
+export PATH="$HOME/.cargo/bin:$PATH"
+
 # Speed Test from Terminal
 alias be='bundle exec'
-alias speedtest-cli='/Users/map34/micasense_projects/network_stuff/speedtest-cli'
+alias py-speedtest-cli='/Users/map34/personal_projects/adrian_venv/bin/speedtest-cli'
 
 ### Docker cleanups
 # Kill all running containers.
@@ -122,8 +125,9 @@ EOF"
 
 vox-remote-refresh-account() {
   HOST=${1:-data-api}
-  ACCOUNT_ID=${2:-549755814145}
-  vox-remote-py-shell $HOST << EOF
+  USER=${2:-frontend}
+  ACCOUNT_ID=${3:-549755814145}
+  vox-remote-py-shell $HOST $USER << EOF
   from voxsup.pinterest.ads import pinterest_refresh_ad_account
   ret = pinterest_refresh_ad_account.apply(args=['$ACCOUNT_ID'], kwargs={'force': 'true'})
   exit()
@@ -132,15 +136,17 @@ EOF
 
 vox-remote-ssh() {
   HOST=${1:-data-api}
-  vox-run bash -c "source tmp/scripts.sh && vox-remote-ssh ${HOST}"
+  USER=${2:-frontend}
+  vox-run bash -c "source tmp/scripts.sh && vox-remote-ssh ${HOST} ${USER}"
 }
 
 alias vox-purge-celery='docker rm -f devenv_voxsup_celery_1 devenv_rabbitmq_1'
 
 vox-remote-py-shell() {
   HOST=${1:-data-api}
-  COMMAND=${2:-}
-  vox-run bash -c "source tmp/scripts.sh && vox-remote-py-shell ${HOST} ${COMMAND}"
+  USER=${2:-frontend}
+  COMMAND=${3:-}
+  vox-run bash -c "source tmp/scripts.sh && vox-remote-py-shell ${HOST} ${USER} ${COMMAND}"
 }
 
 vox-tail-deploy-server-log() {
@@ -179,6 +185,7 @@ alias vox-deploy-go='vox-run bash -c "fab deploy_go"'
 alias vox-deploy-download='vox-run bash -c "fab deploy_download"'
 alias vox-deploy-hotfix='vox-deploy-go && vox-deploy-download'
 alias vox-deploy-site='vox-run bash -c "fab deploy_site"'
+alias vox-pylint='vox-run bash -c "find server/voxsup -name \"*.py\" | xargs pylint -f parseable --rcfile=./.pylintrc"'
 
 vox-deploy-dev-box() {
   vox-run bash -c "fab deploy_single:branch=$1,server=$2"
