@@ -102,7 +102,8 @@ vox-rebuildim() {
 
 alias vox-populatedb='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev dockerfiles/dev_env/setup.bash'
 alias vox='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml up'
-alias vox-run='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev'
+alias vox-down='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml down'
+alias vox-run='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run --rm voxsup_dev'
 alias vox-py-shell='vox-run bash -c "python server/manage.py shell"'
 alias vox-tunnel-rabbitmq='ssh -i ~/.ssh/4c_insights/id_rsa -f ${LOGNAME}@task-mq.4cinsights.com -L 8888:172.16.1.92:15672 -N'
 
@@ -121,6 +122,18 @@ vox-refresh-account() {
   ret = pinterest_refresh_ad_account.apply(args=['${ACCOUNT_ID}'], kwargs={'force': 'true'})
   exit()
 EOF"
+}
+
+vox-print-grc-template() {
+  REPORT_ID=${1}
+  HOST='web1'
+  USER='map34'
+  vox-remote-py-shell $HOST $USER << EOF
+  import json
+  col = mongo['automation'].db['report_status_logging'].find_one({ 'grc_template_id': ${REPORT_ID} }, {'report_template': 1, 'report_schedule': 1, '_id': 0})
+  print json.dumps(col, indent=4)
+  exit()
+EOF
 }
 
 vox-remote-refresh-account() {
