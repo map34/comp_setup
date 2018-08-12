@@ -89,6 +89,15 @@ pip3-autoremove() {
   pip3 uninstall -y $1
 }
 
+export SMARTY_RECIPE_REPO="${HOME}/personal_projects/SmartyRecipe"
+alias sr-rebuildim='docker-compose -f ${SMARTY_RECIPE_REPO}/infra/docker_dev/docker-compose.yml -p smarty_recipe build'
+alias sr='docker-compose -f ${SMARTY_RECIPE_REPO}/infra/docker_dev/docker-compose.yml -p smarty_recipe up'
+alias sr-run='docker-compose -f ${SMARTY_RECIPE_REPO}/infra/docker_dev/docker-compose.yml -p smarty_recipe run --rm webserver bash'
+alias sr-py-shell='sr-run -c "source activate TEST && python backend/server/manage.py shell"'
+alias sr-up='docker-compose -f ${SMARTY_RECIPE_REPO}/infra/docker_dev/docker-compose.yml -p smarty_recipe up'
+alias sr-down='docker-compose -f ${SMARTY_RECIPE_REPO}/infra/docker_dev/docker-compose.yml -p smarty_recipe down'
+alias sr-jupyter='docker-compose -f ${SMARTY_RECIPE_REPO}/infra/docker_dev/docker-compose.yml -p smarty_recipe run --rm -p 8888:8888 webserver bash -c "source activate TEST && jupyter notebook --allow-root --notebook-dir=./notebooks --ip=0.0.0.0 --port=8888"'
+
 export VOX_REPO="${HOME}/4c_insights_projects/voxsupFrontend2"
 vox-rebuildim() {
   pushd ${VOX_REPO}/dockerfiles/dev_env
@@ -100,7 +109,9 @@ vox-rebuildim() {
   popd
 }
 
-alias vox-populatedb='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev dockerfiles/dev_env/setup.bash'
+alias vox-refresh-auth='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev dockerfiles/dev_env/get_latest_auth_dump.bash'
+alias vox-refresh-frontend='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev dockerfiles/dev_env/build_frontend_deps.bash'
+alias vox-prepare='vox-refresh-auth && vox-refresh-frontend'
 alias vox='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml up'
 alias vox-down='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml down'
 alias vox-run='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run --rm voxsup_dev'
