@@ -141,7 +141,15 @@ vox-print-grc-template() {
   USER='map34'
   vox-remote-py-shell $HOST $USER << EOF
   import json
-  col = mongo['automation'].db['report_status_logging'].find_one({ 'grc_template_id': ${REPORT_ID} }, {'report_template': 1, 'report_schedule': 1, '_id': 0})
+  col = mongo['automation'].db['report_status_logging'].find_one({
+    'grc_template_id': ${REPORT_ID}
+  }, {
+    'report_template': 1,
+    'report_schedule': 1,
+    'status': 1,
+    'steps': 1,
+    '_id': 0
+  })
   print json.dumps(col, indent=4)
   exit()
 EOF
