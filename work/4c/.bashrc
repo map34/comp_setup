@@ -103,7 +103,6 @@ vox-rebuildim() {
   pushd ${VOX_REPO}/dockerfiles/dev_env
     docker-compose rm voxsup_celery voxsup_dev && docker rmi -f voxsup_celery voxsup_dev voxsup_base
     pushd $VOX_REPO
-      docker build -f dockerfiles/dev_env/Dockerfile_base -t voxsup_base --build-arg local_user=${LOGNAME} .
       docker-compose -f dockerfiles/dev_env/docker-compose.yml build
     popd
   popd
