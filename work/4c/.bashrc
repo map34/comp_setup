@@ -165,6 +165,17 @@ vox-remote-refresh-account() {
 EOF
 }
 
+vox-remote-search-account() {
+  HOST=${1:-data-api}
+  USER=${2:-frontend}
+  ACCOUNT_NAME=${3:-4C}
+  vox-remote-py-shell $HOST $USER << EOF
+  import voxsup.scripts.pinterest as s
+  s.show_accounts(search="${ACCOUNT_NAME}")
+  exit()
+EOF
+}
+
 vox-remote-ssh() {
   HOST=${1:-data-api}
   USER=${2:-frontend}
