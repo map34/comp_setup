@@ -159,7 +159,7 @@ vox-remote-refresh-account() {
   USER=${2:-frontend}
   ACCOUNT_ID=${3:-549755814145}
   vox-remote-py-shell $HOST $USER << EOF
-  from voxsup.pinterest.ads import pinterest_refresh_ad_account
+  from voxsup.pinterest.views.ads import pinterest_refresh_ad_account
   ret = pinterest_refresh_ad_account.apply(args=['$ACCOUNT_ID'], kwargs={'force': 'true'})
   exit()
 EOF
