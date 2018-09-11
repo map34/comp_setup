@@ -108,12 +108,12 @@ vox-rebuildim() {
   popd
 }
 
-alias vox-refresh-auth='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev dockerfiles/dev_env/get_latest_auth_dump.bash'
-alias vox-refresh-frontend='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run voxsup_dev dockerfiles/dev_env/build_frontend_deps.bash'
+alias vox-run='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run --rm voxsup_dev'
+alias vox-refresh-auth='vox-run dockerfiles/dev_env/get_latest_auth_dump.bash'
+alias vox-refresh-frontend='vox-run dockerfiles/dev_env/build_frontend_deps.bash'
 alias vox-prepare='vox-refresh-auth && vox-refresh-frontend'
 alias vox='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml up'
 alias vox-down='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml down'
-alias vox-run='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml run --rm voxsup_dev'
 alias vox-py-shell='vox-run bash -c "python server/manage.py shell"'
 alias vox-tunnel-rabbitmq='ssh -i ~/.ssh/4c_insights/id_rsa -f ${LOGNAME}@task-mq.4cinsights.com -L 8888:172.16.1.92:15672 -N'
 
