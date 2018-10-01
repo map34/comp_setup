@@ -114,8 +114,10 @@ alias vox-refresh-auth='vox-run dockerfiles/dev_env/get_latest_auth_dump.bash'
 alias vox-refresh-frontend='vox-run dockerfiles/dev_env/build_frontend_deps.bash'
 alias vox-prepare='vox-refresh-auth && vox-refresh-frontend'
 alias vox="${VOX_REPO}/dockerfiles/dev_env/dev"
+alias vox-up="docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml up"
 alias vox-down='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml down'
 alias vox-py-shell='vox-run bash -c "python server/manage.py shell"'
+alias vox-restart-celery='docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml rm -f -s voxsup_celery rabbitmq && docker-compose -f ${VOX_REPO}/dockerfiles/dev_env/docker-compose.yml up -d voxsup_celery rabbitmq'
 alias vox-tunnel-rabbitmq='ssh -i ~/.ssh/4c_insights/id_rsa -f ${LOGNAME}@task-mq.4cinsights.com -L 8888:172.16.1.92:15672 -N'
 
 kill-grep() {
@@ -135,13 +137,15 @@ vox-refresh-account() {
 EOF"
 }
 
-vox-fetch-smart-groups() {
+vox-fetch-4c-related-ads() {
   vox-run bash -c "fab fetch_voxsupads_tables_dump:tables='smart_group smart_group_action_alert_recipient\
   smart_group_alert_config_statuses smart_group_alert_recipients smart_group_alertconfigs smart_group_alerts\
   smart_group_association smart_group_budgeting smart_group_dayparting smart_group_dayparting_schedule\
   smart_group_rules smart_group_rules_actions smart_group_rules_condition smart_group_rules_recipient\
   smart_group_rules_trigger smart_group_schedule smart_group_sportsync smart_group_sportsync_event\
-  smart_group_tvsync_feature smart_group_weathersync smart_group_weathersync_condition smart_group_weathersync_location',do_import=True"
+  smart_group_tvsync_feature smart_group_weathersync smart_group_weathersync_condition smart_group_weathersync_location\
+  social_labels social_labels_account_association social_labels_account_entity_map ad_naming_convention\
+  target_set pinterest_target_group',do_import=True"
 }
 
 vox-print-grc-template() {
